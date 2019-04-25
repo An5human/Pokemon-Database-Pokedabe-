@@ -1,0 +1,210 @@
+
+Table Display:
+\c pokedabe
+SELECT * FROM pokemon;
+SELECT * FROM base_stats;
+SELECT * FROM items;
+SELECT * FROM attacks;
+SELECT * FROM type;
+SELECT * FROM type_strength;
+SELECT * FROM type_weakness;
+SELECT * FROM trainers;
+SELECT * FROM pokemon_gym;
+SELECT * FROM region;
+SELECT * FROM town;
+SELECT * FROM trainer;
+SELECT * FROM pokemon_evolution;
+SELECT * FROM routes;
+SELECT * FROM pokemon_trainer_owns;
+SELECT * FROM attacks_learnt;
+SELECT * FROM pokemon_found_in_town;
+SELECT * FROM pokemon_found_in_route;
+SELECT * FROM trainer_items;
+
+
+Queries:
+
+Select Name,Description,Type1,Type2 FROM Pokemon WHERE Pokemon.name = "";
+
+Select Name,Category,Effect FROM Item where Item="";
+
+SELECT * FROM attacks WHERE Attack = '';
+
+SELECT Name from Attacks Where Power = (Select max(Power) from Attacks);// Power/PP/Accuracy with max avg min etc...
+
+SELECT * 
+FROM pokemon natural join base_stats;
+
+SELECT Pokemon.Name Pokemon_of_Given_Type
+FROM Pokemon 
+WHERE Pokemon.type1 = '<>' OR Pokemon.type2='<>';
+
+SELECT Pokemon_Name
+FROM Attacks_Learnt
+WHERE Attack_Name LIKE 'S%'
+
+SELECT Pokemon_Name
+FROM Pokemon_Found_In_Town
+WHERE Town_Name = 'Pallet';
+
+SELECT Dominant_Over
+FROM Type_Strength
+WHERE Type_Strength.Name ='<>';
+
+SELECT Weak_Against
+FROM Type_Weakness
+WHERE Type_Weakness.Name ='<>';
+
+SELECT DISTINCT Category
+FROM Items; 
+
+SELECT Name,Effect 
+FROM Items
+WHERE Category = 'Pokeballs'
+
+
+SELECT Name,PP,Accuracy,Power
+FROM Attacks
+WHERE Type In (SELECT type1 
+			  FROM Pokemon
+			  WHERE Pokemon.type1 = '');
+
+SELECT pokemon_name
+FROM pokemon_found_in_town
+WHERE town_name = 'Pallet';
+
+SELECT pokemon_name
+FROM pokemon_belongs_in_route
+WHERE route = 1;
+
+SELECT Pokemon_Name
+FROM Attacks_Learnt
+WHERE Attack_Name = 'Tackle'
+
+
+SELECT Pokemon.Name
+FROM Pokemon
+WHERE Pokemon.type1 in (SELECT Dominant_Over 
+						FROM Type_Strength 
+						WHERE Type_Strength.name = '');
+
+SELECT Pokemon.Name
+FROM Pokemon
+WHERE Pokemon.type1 in (SELECT Weak_Against 
+						FROM Type_Weakness 
+						WHERE Type_Weakness.name = '');
+
+SELECT Name 
+FROM Attacks
+WHERE type = '<>';
+
+SELECT pokemon.name
+FROM Pokemon
+WHERE pokemon.type1 IN (SELECT Dominant_Over 
+						FROM Type_Strength
+						WHERE type_strength.Name = (SELECT type1 
+													FROM pokemon
+													WHERE pokemon.name='Pelipper'));
+
+SELECT pokemon.name
+FROM Pokemon
+WHERE pokemon.type1 IN (SELECT Weak_Against
+						FROM Type_Weakness
+						WHERE type_strength.Name = (SELECT type1 
+													FROM pokemon
+													WHERE pokemon.name='Pelipper'));
+
+SELECT Name
+FROM Trainer
+WHERE Trainer_ID IN (SELECT Trainer_ID 
+					FROM pokemon_Trainer_owns
+					WHERE Pokemon_Name IN (SELECT Pokemon_Name 
+											FROM Attacks_Learnt
+											WHERE Attack_Name = 'Tackle'));
+
+ SELECT Name
+ FROM Trainer
+ WHERE Trainer_ID IN (SELECT Trainer_ID
+ 					FROM pokemon_Trainer_owns
+ 					WHERE Pokemon_Name IN (SELECT Name 
+ 											FROM Pokemon
+ 											WHERE Type1 IN (SELECT Name 
+ 															FROM Type_Strength
+ 															WHERE Dominant_Over IN (SELECT Type1 
+ 																					FROM Pokemon
+ 																					WHERE Name = 'Onix' ))));
+
+SELECT Name
+FROM Trainer
+WHERE Trainer_ID IN (SELECT Trainer_ID
+					FROM pokemon_Trainer_owns
+					WHERE Pokemon_Name IN (SELECT Name
+											FROM Pokemon
+											WHERE Type1 IN (SELECT Name
+															FROM Type_Strength 
+															WHERE Dominant_Over IN (SELECT Type1
+																					FROM Pokemon
+																					WHERE name IN (SELECT Pokemon_Name
+																									FROM Pokemon_Trainer_Owns
+																									WHERE Trainer_ID = (SELECT Trainer_ID
+																														FROM Trainer
+																														WHERE Name = 'Brock'))))));
+
+SELECT Name
+ FROM Trainer
+ WHERE Trainer_ID IN (SELECT Trainer_ID
+ 					FROM pokemon_Trainer_owns
+ 					WHERE Pokemon_Name IN (SELECT Name 
+ 											FROM Pokemon
+ 											WHERE Type1 IN (SELECT Name 
+ 															FROM Type_Weakness
+ 															WHERE Weak_Against IN (SELECT Type1 
+ 																					FROM Pokemon
+ 																					WHERE Name = 'Onix' ))));
+
+SELECT Name
+FROM Trainer
+WHERE Trainer_ID IN (SELECT Trainer_ID
+					FROM pokemon_Trainer_owns
+					WHERE Pokemon_Name IN (SELECT Name
+											FROM Pokemon
+											WHERE Type1 IN (SELECT Name
+															FROM Type_Weakness 
+															WHERE Weak_Against IN (SELECT Type1
+																					FROM Pokemon
+																					WHERE name IN (SELECT Pokemon_Name
+																									FROM Pokemon_Trainer_Owns
+																									WHERE Trainer_ID = (SELECT Trainer_ID
+																														FROM Trainer
+																														WHERE Name = 'Brock'))))));
+
+
+
+ SELECT Pokemon_Name,Attack_name,Level
+ FROM Attacks_learnt WHERE Pokemon_Name IN(SELECT Pokemon_Name FROM Pokemon_Trainer_Owns,pokemon_gym WHERE Pokemon_Trainer_Owns.Trainer_ID = Pokemon_gym.gym_Leader and Badge_Name = 'Boulder Badge');
+
+ SELECT Name,pokemon_gym.badge_name FROM Trainer,pokemon_gym WHERE Trainer.Trainer_ID = Pokemon_gym.gym_leader and region = 'HOENN';
+
+ SELECT pft.Route,Count(*) FROM pokemon JOIN pokemon_belongs_in_route pft ON pokemon_name =  name GROUP BY Route HAVING count(pokemon.*)>0;
+
+ SELECT pft.Town_Name,Count(*) FROM pokemon JOIN pokemon_found_in_town pft ON pokemon_name =  name GROUP BY Town_Name HAVING count(pokemon.*)>0;
+
+SELECT Attack_name,Level FROM Attacks_learnt WHERE Pokemon_Name = 'Onix';
+
+SELECT Pokemon_Name,Attack_name,Level FROM Attacks_learnt WHERE Pokemon_Name IN(SELECT Pokemon_Name FROM Pokemon_Trainer_Owns WHERE Trainer_ID = (SELECT Trainer_ID FROM Trainer WHERE Name = 'Brock'));
+
+SELECT name FROM Pokemon WHERE Type1 IN (SELECT Dominant_Over FROM Type_strength WHERE Name IN (SELECT Type1 from Pokemon WHERE Name IN (SELECT Pokemon_Name FROM Pokemon_Trainer_Owns WHERE Trainer_ID IN (SELECT Trainer_ID FROM Pokemon_gym WHERE badge_name = 'Balance Badge'))));
+
+SELECT pg.Badge_name,t.Name,t.Lives_In,t.Level,Pg.Region FROM Pokemon_gym pg JOIN Trainer t ON t.Trainer_ID = pg.Gym_Leader;
+
+SELECT p.Name,p.ID_Number,p.Type1,p.Type2,p.Abilities,t.Town_Name FROM Pokemon p JOIN Pokemon_Found_In_Town t ON p.Name = t.Pokemon_Name;
+
+SELECT p.Name,p.ID_Number,p.Type1,p.Type2,p.Abilities,t.Routes FROM Pokemon p JOIN Pokemon_Belongs_In_Route t ON p.Name = t.Pokemon_Name;
+
+SELECT p.Name,p.ID_Number,p.Type1,p.Type2,p.Abilities,t.Route,tp.Town_Name FROM Pokemon p JOIN Pokemon_Belongs_In_Route t ON p.Name = t.Pokemon_Name JOIN Pokemon_Found_In_Town tp ON tp.Pokemon_Name = t.Pokemon_Name;
+
+SELECT p.Name,p.ID_Number,p.Type1,al.attack_name,al.Level,a.PP,a.Accuracy,a.Power FROM Pokemon p JOIN Attacks_Learnt al ON p.Name = al.Pokemon_Name JOIN Attacks a ON a.Name = al.Attack_Name;
+
+SELECT P.Name,B.Speed,B.HP,B.Speed,B.Defense FROM Pokemon P,Base_Stats B WHERE P.Name = B.Name AND P.Name IN (SELECT Pokemon_Name FROM pokemon_found_in_town WHERE Town_Name = 'Pallet');
+
+SELECT P.Name,B.Speed,B.HP,B.Speed,B.Defense FROM Pokemon P,Base_Stats B WHERE P.Name = B.Name AND P.Name IN (SELECT Pokemon_Name FROM pokemon_belongs_in_route WHERE Route = 1);

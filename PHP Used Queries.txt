@@ -1,0 +1,204 @@
+Table Display:
+SELECT * FROM pokemon;
+SELECT * FROM base_stats;
+SELECT * FROM items;
+SELECT * FROM attacks;
+SELECT * FROM type;
+SELECT * FROM type_strength;
+SELECT * FROM type_weakness;
+SELECT * FROM trainers;
+SELECT * FROM pokemon_gym;
+SELECT * FROM region;
+SELECT * FROM town;
+SELECT * FROM trainer;
+SELECT * FROM pokemon_evolution;
+SELECT * FROM routes;
+SELECT * FROM pokemon_trainer_owns;
+SELECT * FROM attacks_learnt;
+SELECT * FROM pokemon_found_in_town;
+SELECT * FROM pokemon_found_in_route;
+SELECT * FROM trainer_items;
+
+Queries Used
+//Weak PTP
+SELECT Name,description
+                      FROM Pokemon
+                      WHERE Type1 IN (SELECT Name
+                              FROM Type_Weakness 
+                              WHERE Weak_Against IN (SELECT Type1
+                                          FROM Pokemon
+                                          WHERE name IN (SELECT Pokemon_Name
+                                                  FROM Pokemon_Trainer_Owns
+                                                  WHERE Trainer_ID =".$id.")));
+
+//WeakPP.php
+SELECT name,description
+FROM Pokemon
+WHERE type1 IN (SELECT Dominant_Over 
+            FROM Type_Strength
+            WHERE type_strength.Name = (SELECT type1 
+                          FROM pokemon
+                          WHERE pokemon.name='".$name."'));
+
+//WeakAT.php
+SELECT Trainer_ID,Name
+FROM Trainer
+WHERE Trainer_ID IN (SELECT Trainer_ID
+          FROM pokemon_Trainer_owns
+          WHERE Pokemon_Name IN (SELECT Name
+                      FROM Pokemon
+                      WHERE Type1 IN (SELECT Name
+                              FROM Type_Strength
+                              WHERE Dominant_Over IN (SELECT Type1
+                                          FROM Pokemon
+                                          WHERE name IN (SELECT Pokemon_Name
+                                                  FROM Pokemon_Trainer_Owns
+                                                  WHERE Trainer_ID =".$id.")))));
+
+//WeakAP.php
+SELECT Trainer_ID,Name
+ FROM Trainer
+ WHERE Trainer_ID IN (SELECT Trainer_ID
+          FROM pokemon_Trainer_owns
+          WHERE Pokemon_Name IN (SELECT Name 
+                      FROM Pokemon
+                      WHERE Type1 IN (SELECT Name 
+                              FROM Type_Weakness
+                              WHERE Weak_Against IN (SELECT Type1 
+                                          FROM Pokemon
+                                          WHERE Name = '".$name."' ))));
+
+
+//AttackType.php:
+SELECT Count(*) FROM Attacks WHERE type = '".$Type."';
+SELECT Distinct Type FROM Attacks;
+SELECT Max(PP),Max(Accuracy),Max(Power),Min(Power),Min(Accuracy),Min(PP),round(cast(Avg(PP) as numeric),2),round(cast(Avg(Accuracy) as numeric),2),round(cast(Avg(Power) as numeric),2) FROM Attacks where type='".$Type."';
+SELECT * FROM Attacks WHERE type = '".$Type."';
+
+//Attacks.php:
+SELECT Count(*) FROM Attacks;
+SELECT Distinct Type FROM Attacks;
+SELECT Max(PP),Max(Accuracy),Max(Power),Min(Power),Min(Accuracy),Min(PP),round(cast(Avg(PP) as numeric),2),round(cast(Avg(Accuracy) as numeric),2),round(cast(Avg(Power) as numeric),2) FROM Attacks;
+SELECT * FROM Attacks;
+
+//Category.php:
+SELECT Distinct Category FROM Items;
+SELECT Count(*) FROM Items WHERE Category = '".$C."';
+SELECT Distinct Category FROM Items;
+SELECT * FROM Items WHERE Category = '".$C."';
+
+//Item.php:
+SELECT Distinct Category FROM Items;
+SELECT Count(*) FROM Items;
+SELECT Distinct Category FROM Items;
+SELECT * FROM Items;
+
+//Location.php:
+select Distinct town_name from pokemon_found_in_town;
+SELECT name FROM routes;
+
+//PokeBadge.php:
+SELECT Badge_name,region,name,lives_in,gym_leader,level FROM Pokemon_gym,Trainer WHERE gym_leader = Trainer_id and Badge_name='".$BN."';
+SELECT Badge_name,region,name FROM Pokemon_gym,Trainer WHERE gym_leader = Trainer_id and Badge_name='".$BN."';
+
+//PokeGym.php:
+SELECT Badge_name,region,name FROM Pokemon_gym join Trainer on gym_leader = Trainer_id;
+
+//PokemonSearch.php:
+SELECT COUNT(*) FROM pokemon where name LIKE '".$name."%';
+SELECT name,type1,type2,description FROM pokemon WHERE name LIKE '".$name."%';
+
+//Routeinfo.php:
+SELECT COUNT(*) FROM pokemon_belongs_in_route WHERE route =".$num.
+SELECT name,type1,type2,description FROM pokemon join pokemon_belongs_in_route on pokemon_name = name where route = ".$num.
+
+//SearchAttack.php:
+SELECT Count(*) FROM Attacks WHERE name LIKE '".$attack."%';
+SELECT Distinct Type FROM Attacks;
+SELECT Max(PP),Max(Accuracy),Max(Power),Min(Power),Min(Accuracy),Min(PP),round(cast(Avg(PP) as numeric),2),round(cast(Avg(Accuracy) as numeric),2),round(cast(Avg(Power) as numeric),2) FROM Attacks where name LIKE '".$attack."%';
+SELECT * FROM Attacks WHERE name Like '".$attack."%';
+
+//SearchItem.php:
+SELECT Distinct Category FROM Items;
+SELECT Count(*) FROM Items WHERE name LIKE '".$item."%';
+SELECT Distinct Category FROM Items;
+SELECT * FROM Items WHERE name LIKE '".$item."%';
+
+//StrongAP.php:
+SELECT Trainer_ID,Name
+ FROM Trainer
+ WHERE Trainer_ID IN (SELECT Trainer_ID
+          FROM pokemon_Trainer_owns
+          WHERE Pokemon_Name IN (SELECT Name 
+                      FROM Pokemon
+                      WHERE Type1 IN (SELECT Name 
+                              FROM Type_Strength
+                              WHERE Dominant_Over IN (SELECT Type1 
+                                          FROM Pokemon
+                                          WHERE Name = '".$name."' )))); 
+
+//StrongAT.php:
+SELECT Trainer_ID,Name
+FROM Trainer
+WHERE Trainer_ID IN (SELECT Trainer_ID
+          FROM pokemon_Trainer_owns
+          WHERE Pokemon_Name IN (SELECT Name
+                      FROM Pokemon
+                      WHERE Type1 IN (SELECT Name
+                              FROM Type_Weakness 
+                              WHERE Weak_Against IN (SELECT Type1
+                                          FROM Pokemon
+                                          WHERE name IN (SELECT Pokemon_Name
+                                                  FROM Pokemon_Trainer_Owns
+                                                  WHERE Trainer_ID =".$id.")))));
+
+//StrongPP.php:
+SELECT name,description
+FROM Pokemon
+WHERE type1 IN (SELECT Weak_Against
+                FROM Type_Weakness
+                WHERE Name = (SELECT type1 
+                              FROM pokemon
+                              WHERE name='".$name."'));
+
+//StrongPTP.php:
+SELECT Name,description
+FROM Pokemon
+WHERE Type1 IN (SELECT Name
+               FROM Type_Strength 
+               WHERE Dominant_Over IN (SELECT Type1
+                                        FROM Pokemon
+                                        WHERE name IN (SELECT Pokemon_Name
+                                                       FROM Pokemon_Trainer_Owns
+                                                       WHERE Trainer_ID =".$id.")));
+//Towninfo.php:
+SELECT COUNT(*) FROM pokemon_found_in_town WHERE town_name ='".$name."';
+SELECT name,type1,type2,description FROM pokemon join pokemon_found_in_town on pokemon_name = name where town_name = '".$name."';
+
+//Trainer.php:
+SELECT Name,trainer_id FROM trainer;
+
+//TrainerInfo.php:
+SELECT * FROM trainer where Trainer_ID='".$TID."';
+SELECT Pt.Pokemon_name,Pt.Level,p.description FROM pokemon_trainer_owns pt,pokemon p where Trainer_ID='".$TID."' and p.name = pt.Pokemon_Name;
+SELECT name,level FROM trainer where Trainer_ID=".$TID.
+
+//Type.php:
+SELECT name FROM Type;
+
+//Typeinfo.php:
+SELECT * FROM Type where name='".$Type."';
+SELECT Dominant_Over FROM Type_Strength WHERE Name = '".$Type."';
+SELECT Weak_Against FROM Type_Weakness WHERE Name = '".$Type."';
+SELECT COUNT(*) FROM pokemon WHERE Type1 = '".$Type."' or Type2 = '".$Type."';
+SELECT name,type1,type2,description FROM pokemon WHERE Type1 = '".$Type."' or Type2 = '".$Type."';
+
+//main.php:
+SELECT COUNT(*) FROM pokemon;
+SELECT name,type1,type2,description FROM pokemon;
+
+//pokemon.php:
+SELECT * FROM pokemon natural join base_stats where pokemon.name = '".$Pokemon_name."';
+SELECT * FROM attacks_learnt WHERE pokemon_name = '".$Pokemon_name."';
+SELECT * FROM Pokemon_Found_In_Town WHERE Pokemon_name = '".$Pokemon_name."';
+SELECT * FROM Pokemon_Belongs_In_Route WHERE Pokemon_name = '".$Pokemon_name."';
