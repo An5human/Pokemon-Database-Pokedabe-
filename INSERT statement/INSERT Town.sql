@@ -1,0 +1,27 @@
+\c pokedabe
+DELETE FROM Town;
+INSERT INTO Town VALUES('Faraway Island','Hoenn','./Faraway Island.jpg');
+INSERT INTO Town VALUES('Verdanturf','Hoenn','./Verdanturf.jpg');
+INSERT INTO Town VALUES('Ever Grande','Hoenn','./Ever Grande.jpg');
+INSERT INTO Town VALUES('Sootopolis','Hoenn','./Sootopolis.jpg');
+INSERT INTO Town VALUES('Slateport','Hoenn','./Slateport.jpg');
+INSERT INTO Town VALUES('Lavaridge','Hoenn','./Lavaridge.jpg');
+INSERT INTO Town VALUES('Dewford','Hoenn','./Dewford.jpg');
+INSERT INTO Town VALUES('Rustboro','Hoenn','./Rustboro.jpg');
+INSERT INTO Town VALUES('Pacifidlog','Hoenn','./Pacifidlog.jpg');
+INSERT INTO Town VALUES('Petalburg','Hoenn','./Petalburg.jpg');
+INSERT INTO Town VALUES('Mossdeep','Hoenn','./Mossdeep.jpg');
+INSERT INTO Town VALUES('Mauville','Hoenn','./Mauville.jpg');
+INSERT INTO Town VALUES('Fortree','Hoenn','./Fortree.jpg');
+INSERT INTO Town VALUES('Viridian','Kanto','./Viridian.jpg');
+INSERT INTO Town VALUES('Lavender','Kanto','./Lavender.jpg');
+INSERT INTO Town VALUES('Pallet','Kanto','./Pallet.jpg');
+INSERT INTO Town VALUES('Pewter','Kanto','./Pewter.jpg');
+INSERT INTO Town VALUES('Saffron','Kanto','./Saffron.jpg');
+INSERT INTO Town VALUES('Celadon','Kanto','./Celadon.jpg');
+INSERT INTO Town VALUES('Cerulean','Kanto','./Cerulean.jpg');
+INSERT INTO Town VALUES('Fuchsia','Kanto','./Fuchsia.jpg');
+INSERT INTO Town VALUES('Vermilion','Kanto','./Vermilion.jpg');
+INSERT INTO Town VALUES('Cinnabar Island','Kanto','./Vermilion.jpg');
+INSERT INTO Town VALUES('Seafoam Islands','Kanto','./Seafoam Islands.jpg');
+INSERT INTO Town VALUES('Outcast Island','Kanto','./Outcast Island.jpg');
